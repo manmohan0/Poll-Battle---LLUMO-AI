@@ -75,8 +75,9 @@ export const ShowPole = () => {
         }
 
         ws.onmessage = (event) => {
-
+            
             const data = JSON.parse(event.data)
+            console.log(data)
 
             if (data.data) {
                 setQuestion(data.data)
@@ -117,7 +118,9 @@ export const ShowPole = () => {
                     setOption1Vote(data.option1Vote)
                     setOption2Vote(data.option2Vote)
                     setTotalVote(data.total)
-                    setTimer(data.timer)
+                    console.log(data.question.timer)
+                    setTimer(data.question.timer)
+                    setQuestion(data.question)
                     toast.error("You have already cast your vote")
                     break
                 } 

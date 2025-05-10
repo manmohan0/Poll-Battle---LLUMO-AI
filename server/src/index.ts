@@ -91,6 +91,7 @@ wss.on('connection', (ws: WebSocket) => {
         }
 
         const roomQuestion = { question: msg.data.question, option1: msg.data.option1, option2: msg.data.option2, option1Vote: 0, option2Vote: 0, timer: msg.data.timer }
+        console.log(roomQuestion)
         questions.set(msg.roomId, roomQuestion)
 
         createdAt.set(msg.roomId, Date.now())
@@ -130,7 +131,7 @@ wss.on('connection', (ws: WebSocket) => {
         }
 
         if (voters.has(msg.user)) {
-          const replyMsg = JSON.stringify({ success: false, reason: "User can cast vote only once", option1Vote: roomQuestion.option1Vote, option2Vote: roomQuestion.option2Vote, total: roomQuestion.option1Vote + roomQuestion.option2Vote, user: msg.user })
+          const replyMsg = JSON.stringify({ success: false, question: roomQuestion, reason: "User can cast vote only once", option1Vote: roomQuestion.option1Vote, option2Vote: roomQuestion.option2Vote, total: roomQuestion.option1Vote + roomQuestion.option2Vote, user: msg.user })
           return ws.send(replyMsg)
         }
         if (roomQuestion.option1 == selectedOption) {
