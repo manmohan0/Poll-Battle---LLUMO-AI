@@ -38,7 +38,7 @@ wss.on('connection', (ws: WebSocket) => {
           return ws.send(replyMsg)
         }
         
-        if (users.some(user => user.name.trim() === msg.name)) {
+        if (users.some(user => user.username.trim() === msg.name)) {
           const replyMsg = JSON.stringify({ success: false, reason: "User already exists", roomId: msg.roomId })
           return ws.send(replyMsg)
         }
@@ -158,8 +158,6 @@ wss.on('connection', (ws: WebSocket) => {
         const roomQuestion = questions.get(msg.roomId)
 
         if (!roomQuestion) {
-          // const replyMsg = JSON.stringify({ success: false, reason: "Room not found" })
-          // return ws.send(replyMsg)
           return
         }
 
@@ -187,7 +185,7 @@ wss.on('connection', (ws: WebSocket) => {
   })
 
   ws.on('close', () => {
-    users = users.filter(user => user.roomId !== client.roomId || user.name !== client.username)
+    users = users.filter(user => user.roomId !== client.roomId || user.username !== client.username)
     console.log('Client disconnected')
   })
 })
