@@ -39,8 +39,10 @@ wss.on('connection', (ws: WebSocket) => {
           ws.send(replyMsg)
           break
         }
-        
-        if (users.some(user => user.username.trim() === msg.name)) {
+
+        const user_voted = CastedVotes.get(msg.roomId)
+  
+        if (user_voted?.has(msg.name)) {
           const replyMsg = JSON.stringify({ success: false, reason: "User already exists", roomId: msg.roomId })
           ws.send(replyMsg)
           break
@@ -51,7 +53,6 @@ wss.on('connection', (ws: WebSocket) => {
         client.username = msg.name
         users.push(user)
         
-        console.log(user)
         const replyMsg = JSON.stringify({ success: true, reason: "Room Joined", roomId: msg.roomId, user, createdAt: createdAt.get(msg.roomId) })
         ws.send(replyMsg)
         break
@@ -76,7 +77,6 @@ wss.on('connection', (ws: WebSocket) => {
         
         users.push(user)
         rooms.set(roomId, user)
-        console.log(users)
 
         const replyMsg = JSON.stringify({ success: true, reason: 'Room Created',  roomId: roomId, user })
         ws.send(replyMsg)
