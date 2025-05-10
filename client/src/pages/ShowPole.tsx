@@ -32,15 +32,6 @@ export const ShowPole = () => {
             navigate('/')
             return
         } 
-
-        // if (!localStorage.getItem(`timeleft${roomId}`)) {
-        //     const jointime = Date.now().toString()
-        //     localStorage.setItem(`timeleft${roomId}`, jointime.toString())
-        //     setJoinTime(parseInt(jointime))
-        // } else {
-        //     const jointime = localStorage.getItem(`timeleft${roomId}`) as string
-        //     setJoinTime(parseInt(jointime))
-        // }
     }, [navigate, roomId])
 
     useEffect(() => {

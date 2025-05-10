@@ -33,21 +33,25 @@ wss.on('connection', (ws: WebSocket) => {
     switch (msg.msgType) {
 
       case ('Join Room') : {
-        if (!rooms.has(msg.roomId)) {
+        
+        if (!questions.has(msg.roomId)) {
           const replyMsg = JSON.stringify({ success: false, reason: "Room not found", roomId: msg.roomId }) 
-          return ws.send(replyMsg)
+          ws.send(replyMsg)
+          break
         }
         
         if (users.some(user => user.username.trim() === msg.name)) {
           const replyMsg = JSON.stringify({ success: false, reason: "User already exists", roomId: msg.roomId })
-          return ws.send(replyMsg)
+          ws.send(replyMsg)
+          break
         }
-
+        
         const user = new User(msg.name, msg.type, msg.roomId)
         client.roomId = msg.roomId
         client.username = msg.name
         users.push(user)
-
+        
+        console.log(user)
         const replyMsg = JSON.stringify({ success: true, reason: "Room Joined", roomId: msg.roomId, user, createdAt: createdAt.get(msg.roomId) })
         ws.send(replyMsg)
         break
@@ -64,13 +68,15 @@ wss.on('connection', (ws: WebSocket) => {
         
         if (rooms.get(roomId)) {
           const replyMsg = JSON.stringify({ success: false, reason: "Room already exists", roomId })
-          return ws.send(replyMsg)
+          ws.send(replyMsg)
+          break
         }
         
         const user = new User(msg.name, msg.type, roomId)
         
         users.push(user)
         rooms.set(roomId, user)
+        console.log(users)
 
         const replyMsg = JSON.stringify({ success: true, reason: 'Room Created',  roomId: roomId, user })
         ws.send(replyMsg)
@@ -82,16 +88,18 @@ wss.on('connection', (ws: WebSocket) => {
 
         if (!rooms.get(msg.roomId)) {
           const replyMsg = JSON.stringify({ success: false, reason: "Room does not exist" })
-          return ws.send(replyMsg)
+          ws.send(replyMsg)
+          break
         }
         
         if (!user) {
           const replyMsg = JSON.stringify({ success: false, reason: "User is not the host" })
-          return ws.send(replyMsg)
+          ws.send(replyMsg)
+          break
         }
 
         const roomQuestion = { question: msg.data.question, option1: msg.data.option1, option2: msg.data.option2, option1Vote: 0, option2Vote: 0, timer: msg.data.timer }
-        console.log(roomQuestion)
+
         questions.set(msg.roomId, roomQuestion)
 
         createdAt.set(msg.roomId, Date.now())
@@ -106,7 +114,8 @@ wss.on('connection', (ws: WebSocket) => {
 
         if (!question) {
           const replyMsg = JSON.stringify({ success: false, reason: "Room not found" })
-          return ws.send(replyMsg)
+          ws.send(replyMsg)
+          break
         }
         
         const replyMsg = JSON.stringify({ success: true, reason: "", data: question, createdAt: createdAt.get(msg.roomId), option1Vote: question.option1Vote, option2Vote: question.option2Vote, total: question?.option1Vote + question?.option2Vote, timer: question.timer })
@@ -120,7 +129,8 @@ wss.on('connection', (ws: WebSocket) => {
         
         if (!roomQuestion) {
           const replyMsg = JSON.stringify({ success: false, reason: "Room not found" })
-          return ws.send(replyMsg)
+          ws.send(replyMsg)
+          break
         }
 
         let voters = CastedVotes.get(msg.roomId)
@@ -132,7 +142,8 @@ wss.on('connection', (ws: WebSocket) => {
 
         if (voters.has(msg.user)) {
           const replyMsg = JSON.stringify({ success: false, question: roomQuestion, reason: "User can cast vote only once", option1Vote: roomQuestion.option1Vote, option2Vote: roomQuestion.option2Vote, total: roomQuestion.option1Vote + roomQuestion.option2Vote, user: msg.user })
-          return ws.send(replyMsg)
+          ws.send(replyMsg)
+          break
         }
         if (roomQuestion.option1 == selectedOption) {
           roomQuestion.option1Vote++
@@ -158,9 +169,7 @@ wss.on('connection', (ws: WebSocket) => {
 
         const roomQuestion = questions.get(msg.roomId)
 
-        if (!roomQuestion) {
-          return
-        }
+        if (!roomQuestion) break
 
         ws.send(JSON.stringify({ success: true, reason: "Time's up", option1Vote: roomQuestion?.option1Vote, option2Vote: roomQuestion?.option2Vote, total: roomQuestion?.option1Vote + roomQuestion?.option2Vote }))
 
