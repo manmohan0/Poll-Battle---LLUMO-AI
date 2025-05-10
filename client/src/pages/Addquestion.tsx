@@ -9,10 +9,10 @@ export const Addquestion = () => {
     const [question, setQuestion] = useState<string>("")
     const [option1, setOption1] = useState<string>("")
     const [option2, setOption2] = useState<string>("")
-    const [roomId, setRoomId] = useState<string>("")
+    const [timer, setTimer] = useState<number>(60)
 
     const navigate = useNavigate()
-    const params = useParams()
+    const { roomId } = useParams()
     const ws = WebSocketClient.getClient()
     
     const handleQuestionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,6 +25,10 @@ export const Addquestion = () => {
 
     const handleOption2Change = (event: React.ChangeEvent<HTMLInputElement>) => {
         setOption2(event.target.value)
+    }
+
+    const handleTimerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTimer(parseInt(event.target.value))
     }
 
     const handleSubmit = () => {
@@ -41,18 +45,15 @@ export const Addquestion = () => {
         }
 
         const data = {
-            question: question,
-            option1: option1,
-            option2: option2,
-            roomId: roomId
+            question,
+            option1,
+            option2,
+            roomId,
+            timer
         }
         ws.send(JSON.stringify({ msgType: "Add Question", data, roomId }))
         navigate(`/room/${roomId}`)
     }
-
-    useEffect(() => {
-        setRoomId(params.roomId as string)
-    }, [params.roomId])
 
     useEffect(() => {
         ws.onopen = () => {
@@ -88,8 +89,9 @@ export const Addquestion = () => {
             <InputBox label={"Enter your Question"} type={"text"} placeholder={"Who is prime minister of India?"} onInput={handleQuestionChange} />
             <InputBox label={"Enter Option 1"} type={"text"} placeholder={"Narendra Modi"} onInput={handleOption1Change} />
             <InputBox label={"Enter Option 2"} type={"text"} placeholder={"Manmohan Singh"} onInput={handleOption2Change} />
-
+            <InputBox label={"Enter Timer in seconds"} type={"text"} placeholder={"60"} onInput={handleTimerChange} />
             <PrimaryButton text={"Submit"} onClick={handleSubmit}/>
+            <div className="text-white text-center">Room Id :- {roomId}</div>
             </div>
         </div>
     </>

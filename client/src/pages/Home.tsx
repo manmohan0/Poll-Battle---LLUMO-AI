@@ -32,24 +32,37 @@ export default function Home() {
           
         const data = JSON.parse(event.data)
         
-        if (data.reason === "Room Created") {
-          if (!localStorage.getItem("user")) {
-            localStorage.setItem("user", JSON.stringify(data.user))
-            localStorage.setItem("roomId", JSON.stringify(data.roomId))
-          }
+        switch (data.reason) {
+          case ("Room Created") : {
+            if (!localStorage.getItem("user")) {
+              localStorage.setItem("user", JSON.stringify(data.user))
+              localStorage.setItem("roomId", JSON.stringify(data.roomId))
+            }
 
-          navigate(`/room/${data.roomId}/Addquestion`)
-        } else if (data.reason === "Room not found") {
-          toast.error("Room not found")
-        } else if (data.reason == "Room already exists"){
-          toast.error("Room already exists")
-        } else if (data.reason === "Room Joined") {
-          if (!localStorage.getItem("user")) {
-            localStorage.setItem("user", JSON.stringify(data.user))
-            localStorage.setItem("roomId", JSON.stringify(data.roomId))
-          }
+            navigate(`/room/${data.roomId}/Addquestion`)
+            break
+          } 
+          case ( "Room not found") : {
+            toast.error("Room not found")
+            break
+          } 
+          case ("Room already exists") : {
+            toast.error("Room already exists")
+            break
+          } 
+          case ("Room Joined") : {
+            if (!localStorage.getItem("user")) {
+              localStorage.setItem("user", JSON.stringify(data.user))
+              localStorage.setItem("roomId", JSON.stringify(data.roomId))
+            }
 
-          navigate(`/room/${data.roomId}`)
+            navigate(`/room/${data.roomId}`)
+            break
+          }
+          case ("User already exists") : {
+            toast.error("User already exists")
+            break
+          }
         } 
       }
 
