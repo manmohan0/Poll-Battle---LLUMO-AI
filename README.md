@@ -37,6 +37,13 @@
     ```
 - Now your backend is running
 
+## Using Docker
+- In the root directory:
+  
+    ```bash
+    docker-compose up
+    ```
+
 # Features
 ## Frontend (React.js)
 - Users enter their name (unique, no password) and either:
