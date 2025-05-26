@@ -3,7 +3,7 @@ export class WebSocketClient {
     private socket: WebSocket;
 
     private constructor(){
-        this.socket = new WebSocket("ws://localhost:8080");
+        this.socket = new WebSocket(`ws://${window.location.hostname}:8080`);
     }
 
     public static getClient() {
