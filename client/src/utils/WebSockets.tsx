@@ -4,6 +4,7 @@ export class WebSocketClient {
 
     private constructor(){
         const isProduction = import.meta.env.MODE === 'production';
+        console.log(import.meta.env.MODE)
         const wsURL = isProduction ? import.meta.env.VITE_WEBSOCKET_URL : `ws://${window.location.hostname}:8080`;
         this.socket = new WebSocket(wsURL);
     }
