@@ -7,12 +7,14 @@ import CORS from 'cors'
 const app = express()
 
 app.use(CORS({
-  origin: 'http://localhost:5173',
+  origin: process.env.NODE_ENV === "production" ? process.env.FRONTEND : 'http://localhost:5173',
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }))
 
-const server = app.listen(8080)
+const port = process.env.PORT || 8080
+
+const server = app.listen(port)
 const wss = new WebSocket.Server({ server })
 
 let users: User[] = []
